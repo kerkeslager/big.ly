@@ -1,0 +1,34 @@
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 14pt;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+input[type=text] {
+  width: 300px;
+}
+
+form {
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+#result {
+  background-color: aquamarine;
+  border: DarkGreen 2px solid;
+  margin: 5px;
+  padding: 5px;
+}
+
+#error {
+  background-color: pink;
+  border: red 2px solid;
+  margin: 5px;
+  padding: 5px;
+}
