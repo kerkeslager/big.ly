@@ -67,7 +67,5 @@ def expand_link():
         'history': history,
     })
 
-
-
 if __name__ == '__main__':
     app.run()
