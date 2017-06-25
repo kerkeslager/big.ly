@@ -17,13 +17,20 @@ def send_js(path, methods=['GET']):
 def send_css(path):
     return flask.send_from_directory('static/css', path)
 
-def is_absolute(link):
-    return bool(urllib.parse.urlparse(link).netloc)
-
 def clean_link(link):
     # TODO Strip UTM parameters
     # TODO Strip site-specific stuff (for example, GET parameters on Amazon product pages can mostly be stripped)
     return link
+
+def is_absolute(link):
+    return bool(urllib.parse.urlparse(link).netloc)
+
+def make_absolute(referrer, link):
+    if is_absolute(link):
+        return link
+
+    base = '{scheme}://{netloc}'.format(**urllib.parse.urlparse(referrer)._asdict())
+    return urllib.parse.urljoin(base, link)
 
 MAX_REDIRECTS = 16
 
@@ -45,7 +52,12 @@ def expand_link():
             response.status_code = 404
             return response
 
-        link = clean_link(response.headers['Location'])
+        link = response.headers.get('Location')
+
+        # TODO Handle if link is None or malformed
+
+        link = clean_link(link)
+        link = make_absolute(history[-1], link)
 
         if link in history:
             response = flask.jsonify({
@@ -55,10 +67,6 @@ def expand_link():
             })
             response.status_code = 404
             return response
-
-        if not is_absolute(link):
-            base = '{scheme}://{netloc}'.format(**urllib.parse.urlparse(history[-1])._asdict())
-            link = urllib.parse.urljoin(base, link)
 
         response = requests.get(link, allow_redirects=False)
 
